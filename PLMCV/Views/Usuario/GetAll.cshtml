@@ -1,0 +1,86 @@
+﻿
+@model ML.Usuario
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hr />
+<div class="text-center">
+    <h2>Usuarios Registrados</h2>
+</div>
+<hr />
+<br />
+
+
+
+
+<table class="table table-responsive-sm table-hover" id="myTable">
+    <thead>
+        <tr>
+            <th>Editar</th>
+            <th>IdUsuario</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>RFC</th>
+            <th>Eliminar</th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ML.Usuario usuario in Model.Usuarios)
+        {
+            <tr>
+                <td><a class="btn btn-warning" href="@Url.Action("Form", "UsuarioController", new {IdUsuario = usuario.IdUsuario })"><i class="fa-solid fa-pen" style="color: #fff;"></i></a></td>
+               
+
+
+
+                <td>@usuario.IdUsuario</td>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.ApellidoPaterno</td>
+                <td>@usuario.ApellidoMaterno</td>
+                <td>@usuario.RFC</td>
+             
+
+                <td><a class="btn btn-danger" href="@Url.Action("Delete","Usuario", new { IdUsuario = usuario.IdUsuario })" onclick=" return confirm('¿Estas seguro que deseas eliminar esta registro?')"><i class="fa-solid fa-trash" style="color: #fffff;"></i></a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Scripts.Render("~/bundles/jquery")
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+@Scripts.Render("~/bundles/jquery")
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+    let table = new DataTable('#myTable', {
+        reponsive: true,
+        "lengthMenu": [[5, 10, 15, 20, -1], [5, 10, 15, 20, "Todos"]],
+        searching: false,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+        },
+    });
+
+    /*toggle*/
+
+    function ChangeStatus(idUsuario, e) {
+        var status = e.checked
+
+        $.ajax({
+            url: '@Url.Action("ChangeStatus")',
+            data: { IdUsuario: idUsuario, Status : status },
+            type: 'POST',
+            dataType : 'json',
+            success: { },
+            error: {
+                //alert('Ocurrio un error')
+            }
+
+        })
+
+
+    }
+
+</script>

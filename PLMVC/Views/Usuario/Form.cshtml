@@ -1,0 +1,152 @@
+﻿
+@model ML.Usuario
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<center><h2>Registrar un NUEVO Usuario</h2></center>
+
+
+
+
+
+
+
+<hr />
+@using (Html.BeginForm("Form", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data" }))
+
+{
+    @Html.HiddenFor(model => model.IdUsuario)
+
+    <div class="row">
+
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.Nombre)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user fa-lg"></i></span>
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @onkeypress = "return lettersOnly(event, 'lblErrorNombre')" })
+            </div>
+            <label style="color : red;">@Html.ValidationMessageFor(model => model.Nombre)</label>
+            <label id="lblErrorNombre"></label>
+        </div>
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.ApellidoPaterno)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user fa-lg"></i></span>
+                @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @onkeypress = "return lettersOnly(event, 'lblErrorApellidoPaterno')" })
+            </div>
+            <label style="color : red;">@Html.ValidationMessageFor(model => model.ApellidoPaterno)</label>
+            <label id="lblErrorApellidoPaterno"></label>
+        </div>
+        <div class="col md-3">
+            @Html.LabelFor(model => model.ApellidoMaterno)
+            @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.RFC)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user fa-lg"></i></span>
+                @Html.TextBoxFor(model => model.RFC, new { @class = "form-control", @onkeypress = "return validarEmail(event, 'lblErrorEmail')" })
+            </div>
+
+        </div>
+    </div>
+    <br />
+
+
+
+
+    //botones
+    <center>
+        <button id="btnGuardar" class="btn btn-success" type="submit"><i class="bi bi-life-preserver"></i>  Guardar</button>
+        <a id="btnCancelar" class="btn btn-outline-danger" href="@Url.Action("GetAll", "Usuario")"><i class="fa-solid fa-xmark"></i>  Volver</a>
+
+    </center>
+
+
+}
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    /*Validacion de letras en los inputs */
+
+    function lettersOnly(e, lbl) {
+        var charCode = e.keyCode;
+
+        if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) {
+            $('#' + lbl).text("")
+            return true;
+        }
+        else {
+            $('#' + lbl).text("Solo se aceptan letras")
+            $('#' + lbl).css('color', 'red');
+            return false;
+        }
+    }
+    //Validacion de numeros en los inputs
+
+
+    function numbersOnly(e, lbl) {
+        var charCode = e.keyCode;
+
+        if ((charCode >= 48 && charCode <= 57) || charCode == 8) {
+            $('#' + lbl).text("")
+            return true;
+        }
+        else {
+            $('#' + lbl).text("Solo se aceptan números")
+            $('#' + lbl).css('color', 'red');
+            return false;
+        }
+    }
+
+
+    /*Pais a Estado*/
+    $("#ddlPais").change(function () {
+        $("#ddlEstado").empty();
+        $.ajax({
+            url: "http://localhost:51787/MostrarUsuarios/EstadoGetByIdPais", //direccion donde hara la peticion
+            type: "GET", //verbo del controlador
+            dataType: "json", //formato para la información
+            data: { IdPais: $("#ddlPais").val() }, //los datos que necesitemos enviar
+            success: function (result) {
+                $("#ddlEstado").append('<option value="0">' + 'Seleccione una opción' + '</option>');
+                $.each(result, function (i, result) {
+                    $("#ddlEstado").append('<option value="'
+                        + result.IdEstado + '">'
+                        + result.Nombre + '</option>');
+                });
+            },
+            error: function (error) {
+                alert('Ocurrio un error la consultar los estados del pais');
+            }
+        });
+
+    });
+
+
+
+    /*Botones */
+    $('#btnGuardar').hover(
+        function () {
+            $(this).addClass('fa-beat');
+        },
+        function () {
+            $(this).removeClass('fa-beat');
+        }
+    );
+
+    $('#btnCancelar').hover(
+        function () {
+            $(this).addClass('fa-shake');
+        },
+        function () {
+            $(this).removeClass('fa-shake');
+        }
+    );
+
+    }</script>
